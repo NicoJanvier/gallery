@@ -1,7 +1,6 @@
 import * as React from "react";
 import { SIZES } from "../utils/size";
 import { usePicture } from "./FramesContext";
-import { FaCopy } from "react-icons/fa";
 
 type Props = {
   id?: string;

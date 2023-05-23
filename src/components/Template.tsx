@@ -19,14 +19,14 @@ export const Template: React.FC<Props> = ({ className, onSelect }) => {
           "flex w-full flex-auto flex-col items-center gap-6 pl-10 pr-10"
         )}
       >
-        <div className="flex items-end gap-5 self-end">
+        <div className="ml-28 flex items-end gap-5">
           <Frame id="0" {...frameProps} size="xs" />
           <Frame id="1" {...frameProps} size="m" />
           <Frame id="2" {...frameProps} size="xl" />
           <Frame id="3" {...frameProps} size="m-square" />
           <Frame id="4" {...frameProps} size="xs" />
         </div>
-        <div className="flex gap-4 self-start">
+        <div className="-ml-28 flex gap-4">
           <Frame id="5" {...frameProps} size="xs" />
           <Frame id="6" {...frameProps} size="l" />
           <div className="flex flex-col gap-4 self-start">
