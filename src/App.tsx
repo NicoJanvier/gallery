@@ -1,46 +1,59 @@
 import * as React from "react";
-import { useFrames, withFramesProvider } from "./components/FramesContext";
+import {
+  FramesProvider,
+  useFrames,
+  withFramesProvider,
+} from "./components/FramesContext";
 import { PictureDetails } from "./components/PictureDetails";
 import { Template } from "./components/Template";
 import { Panel } from "./components/Panel";
 import Modal from "./components/Modal";
 import { FramesListSummary } from "./components/FramesListSummary";
+import { PictureLibrary } from "./components/Library";
+import { PicturesProvider, usePictures } from "./components/PicturesContext";
+import { useStorage } from "./components/Storage";
 
-export const App = withFramesProvider(function () {
+export const App = function () {
+  const [save, load] = useStorage();
   const [selectedId, setSelectedId] = React.useState<string>();
-  const { frames, loadFrames } = useFrames();
+  const { frames } = useFrames();
   const [showModal, setShowModal] = React.useState(false);
   const [name, setName] = React.useState("");
 
-  const showSummaryButton = Object.values(frames).some((f) => f.dataUrl);
+  const showSummaryButton = Object.values(frames).some((f) => f.pictureId);
 
   const handleSave = () => {
     if (!name) {
       return;
     }
-    if (localStorage.getItem(name)) {
-      const override = confirm(
-        `"${name}" already exists on this device, do you want to overide?`
-      );
-      if (!override) return null;
-    }
-    localStorage.setItem(name, JSON.stringify(frames));
+    save(name);
+    // if (localStorage.getItem(name)) {
+    //   const override = confirm(
+    //     `"${name}" already exists on this device, do you want to overide?`
+    //   );
+    //   if (!override) return null;
+    // }
+    // localStorage.setItem(name, JSON.stringify(frames));
   };
 
   const loadSave = () => {
-    const name = prompt(
-      "Which gallery would you like to load?",
-      localStorage.length ? (localStorage.key(0) as string) : ""
-    );
-    if (!name) return;
-    const data = localStorage.getItem(name);
-    if (!data) {
-      alert("No gallery found with this name!");
-    } else {
-      const frames = JSON.parse(data);
-      loadFrames(frames);
+    const name = load();
+    if (name) {
       setName(name);
     }
+    // const name = prompt(
+    //   "Which gallery would you like to load?",
+    //   localStorage.length ? (localStorage.key(0) as string) : ""
+    // );
+    // if (!name) return;
+    // const data = localStorage.getItem(name);
+    // if (!data) {
+    //   alert("No gallery found with this name!");
+    // } else {
+    //   const frames = JSON.parse(data);
+    //   loadFrames(frames);
+    //   setName(name);
+    // }
   };
 
   const btnClasses =
@@ -65,7 +78,7 @@ export const App = withFramesProvider(function () {
       </header>
       <main className="flex w-screen  flex-auto items-center justify-center bg-gray-200">
         <div className="flex h-full w-full flex-col items-center justify-between gap-8">
-          <div className="my-10">
+          <div className="mb-2 mt-6">
             <input
               type="text"
               value={name}
@@ -86,6 +99,7 @@ export const App = withFramesProvider(function () {
               <PictureDetails id={selectedId} />
             </Panel>
           ) : null}
+          <PictureLibrary />
         </div>
       </main>
       <Modal
@@ -97,4 +111,12 @@ export const App = withFramesProvider(function () {
       </Modal>
     </div>
   );
-});
+};
+
+export const WrapperApp = () => (
+  <PicturesProvider>
+    <FramesProvider>
+      <App />
+    </FramesProvider>
+  </PicturesProvider>
+);

@@ -6,6 +6,8 @@ import { FaBorderStyle, FaTimes, FaPlus } from "react-icons/fa";
 import { SIZES } from "../utils/size";
 import { useFrame } from "./FramesContext";
 import { Tooltip } from "./Tooltip";
+import { Spinner } from "./Spinner";
+import { usePictures } from "./PicturesContext";
 
 type Props = {
   className?: string;
@@ -15,6 +17,20 @@ type Props = {
   onClick: (id: string) => void;
 };
 
+type DragItemType = {
+  source: string;
+  id: string;
+};
+
+function isDragItemType(obj: unknown): obj is DragItemType {
+  return (
+    typeof obj === "object" &&
+    obj !== null &&
+    Object.hasOwn(obj, "source") &&
+    Object.hasOwn(obj, "id")
+  );
+}
+
 export const Frame: React.FC<Props> = ({
   id,
   col,
@@ -23,7 +39,7 @@ export const Frame: React.FC<Props> = ({
   onClick,
 }) => {
   const {
-    frame: { mask, dataUrl, name },
+    frame: { mask, pictureId },
     setPicture,
     removePicture,
     movePicture,
@@ -33,6 +49,8 @@ export const Frame: React.FC<Props> = ({
     size: sizeKey,
     col,
   });
+  const { getPictures } = usePictures();
+  const [picture] = pictureId ? getPictures([pictureId]) : [];
   const [loading, setLoading] = React.useState(false);
   const { multiplier } = useSize();
   const frameSize = SIZES[sizeKey][0];
@@ -43,15 +61,13 @@ export const Frame: React.FC<Props> = ({
   const mw = col ? maskSize[0] : maskSize[1];
   const mh = col ? maskSize[1] : maskSize[0];
 
-  const handlePictureLoad = (file: File) => {
+  const handlePictureLoad = (files: FileList) => {
     setLoading(true);
-    setPicture(file).finally(() => setLoading(false));
+    setPicture(files).finally(() => setLoading(false));
   };
   const onDrop = (acceptedFiles: FileList | null) => {
-    if (!acceptedFiles) return;
-    for (const file of acceptedFiles) {
-      handlePictureLoad(file);
-    }
+    if (!acceptedFiles || !acceptedFiles[0]) return;
+    handlePictureLoad(acceptedFiles);
   };
 
   const handleDelete = () => {
@@ -76,13 +92,22 @@ export const Frame: React.FC<Props> = ({
         e.preventDefault();
         const item = e.dataTransfer.items[0];
         if (item.kind === "file") {
-          handlePictureLoad(item.getAsFile()!);
+          handlePictureLoad(e.dataTransfer.files);
         } else if (item.kind === "string") {
-          item.getAsString((s) => movePicture(s, !!dataUrl));
+          item.getAsString((s) => {
+            const data = JSON.parse(s);
+            if (isDragItemType(data)) {
+              if (data.source === "frame") {
+                movePicture(data.id, !!picture?.id);
+              } else if (data.source === "library") {
+                // TODO change setPicture to take in pictureId
+              }
+            }
+          });
         }
       }}
     >
-      {dataUrl ? (
+      {picture?.id ? (
         <Tooltip
           content={
             <>
@@ -109,15 +134,18 @@ export const Frame: React.FC<Props> = ({
             className="flex items-center justify-center overflow-hidden"
           >
             <img
-              src={dataUrl}
-              alt={name}
+              src={picture?.dataUrl}
+              alt={picture?.name}
               className={cx(
                 "object-cover hover:cursor-pointer",
                 col && "max-h-full max-w-none"
               )}
               draggable
               onDragStart={(e) => {
-                e.dataTransfer.items.add(id, "text/plain");
+                e.dataTransfer.items.add(
+                  JSON.stringify({ source: "frame", id }),
+                  "text/plain"
+                );
               }}
               onClick={() => onClick(id)}
             />
@@ -138,18 +166,7 @@ export const Frame: React.FC<Props> = ({
             accept="image/*"
             onChange={(e) => onDrop(e.target.files)}
           />
-          {loading ? (
-            <div
-              className="text-primary inline-block h-8 w-8 animate-spin rounded-full border-4 border-solid border-current border-r-transparent align-[-0.125em] motion-reduce:animate-[spin_1.5s_linear_infinite]"
-              role="status"
-            >
-              <span className="!absolute !-m-px !h-px !w-px !overflow-hidden !whitespace-nowrap !border-0 !p-0 ![clip:rect(0,0,0,0)]">
-                Loading...
-              </span>
-            </div>
-          ) : (
-            <FaPlus />
-          )}
+          {loading ? <Spinner /> : <FaPlus />}
         </label>
       )}
     </div>
