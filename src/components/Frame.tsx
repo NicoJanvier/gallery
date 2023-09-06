@@ -49,7 +49,7 @@ export const Frame: React.FC<Props> = ({
     size: sizeKey,
     col,
   });
-  const { getPictures } = usePictures();
+  const { getPictures, importImages } = usePictures();
   const [picture] = pictureId ? getPictures([pictureId]) : [];
   const [loading, setLoading] = React.useState(false);
   const { multiplier } = useSize();
@@ -61,9 +61,11 @@ export const Frame: React.FC<Props> = ({
   const mw = col ? maskSize[0] : maskSize[1];
   const mh = col ? maskSize[1] : maskSize[0];
 
-  const handlePictureLoad = (files: FileList) => {
+  const handlePictureLoad = async (files: FileList) => {
     setLoading(true);
-    setPicture(files).finally(() => setLoading(false));
+    const [pictureId] = await importImages(files);
+    setPicture(pictureId);
+    setLoading(false);
   };
   const onDrop = (acceptedFiles: FileList | null) => {
     if (!acceptedFiles || !acceptedFiles[0]) return;
@@ -100,7 +102,7 @@ export const Frame: React.FC<Props> = ({
               if (data.source === "frame") {
                 movePicture(data.id, !!picture?.id);
               } else if (data.source === "library") {
-                // TODO change setPicture to take in pictureId
+                setPicture(data.id);
               }
             }
           });
@@ -137,7 +139,7 @@ export const Frame: React.FC<Props> = ({
               src={picture?.dataUrl}
               alt={picture?.name}
               className={cx(
-                "object-cover hover:cursor-pointer",
+                "h-full object-cover hover:cursor-pointer",
                 col && "max-h-full max-w-none"
               )}
               draggable
@@ -147,7 +149,7 @@ export const Frame: React.FC<Props> = ({
                   "text/plain"
                 );
               }}
-              onClick={() => onClick(id)}
+              onClick={() => pictureId && onClick(pictureId)}
             />
           </div>
         </Tooltip>

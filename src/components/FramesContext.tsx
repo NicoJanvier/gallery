@@ -1,6 +1,5 @@
 import * as React from "react";
 import { SizeKeys } from "../utils/size";
-import { usePictures } from "./PicturesContext";
 
 type FrameStaticProps = {
   id: string;
@@ -18,9 +17,9 @@ export type Frame = {
 export type FrameMap = Record<string, Frame>;
 type ContextType = {
   frames: FrameMap;
-  loadFrames: (data: any) => void;
+  loadFrames: (data: FrameMap) => void;
   addFrame: (f: Frame) => void;
-  setPicture: (id: string, files: FileList) => Promise<null>;
+  setPicture: (id: string, pictureId: string) => void;
   removePicture: (id: string) => void;
   movePicture: (from: string, to: string, twoWay: boolean) => void;
   toggleMask: (id: string) => void;
@@ -30,7 +29,7 @@ const Context = React.createContext<ContextType>({
   frames: {},
   loadFrames: () => null,
   addFrame: () => null,
-  setPicture: async () => null,
+  setPicture: () => null,
   removePicture: () => null,
   movePicture: () => null,
   toggleMask: () => null,
@@ -39,7 +38,6 @@ const Context = React.createContext<ContextType>({
 export const FramesProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
-  const { getPictures, importImages } = usePictures();
   const [frames, setFrames] = React.useState<FrameMap>({});
 
   const loadFrames = (frames: FrameMap) => {
@@ -65,11 +63,8 @@ export const FramesProvider: React.FC<React.PropsWithChildren> = ({
     }
   };
 
-  const setPicture = async (id: string, files: FileList | null) => {
-    if (!frames[id] || files === null || files.length !== 1) return null;
-    const [pictureId] = await importImages(files);
+  const setPicture = (id: string, pictureId: string) => {
     setFrames((f) => ({ ...f, [id]: { ...f[id], pictureId } }));
-    return null;
   };
 
   const removePicture = (id: string) => {
@@ -82,20 +77,20 @@ export const FramesProvider: React.FC<React.PropsWithChildren> = ({
 
   const movePicture = (fromId: string, toId: string, twoWay: boolean) => {
     if (frames[fromId]?.pictureId) {
-      const [fromPicture, toPicture] = getPictures(
-        [frames[fromId].pictureId, frames[toId].pictureId].filter(
-          (id) => !!id
-        ) as string[]
-      );
+      const [fromPicture, toPicture] = [
+        frames[fromId].pictureId,
+        frames[toId].pictureId,
+      ];
+
       setFrames((f) => ({
         ...f,
         [fromId]: {
           ...f[fromId],
-          pictureId: twoWay && toPicture ? toPicture.id : undefined,
+          pictureId: twoWay && toPicture ? toPicture : undefined,
         },
         [toId]: {
           ...f[toId],
-          pictureId: fromPicture.id,
+          pictureId: fromPicture,
         },
       }));
     }
@@ -161,7 +156,7 @@ export const useFrame = ({ id, size, col }: FrameStaticProps) => {
   }, [col, size, id, addFrame]);
 
   return {
-    setPicture: (files: FileList) => setPicture(id, files),
+    setPicture: (pictureId: string) => setPicture(id, pictureId),
     removePicture: () => removePicture(id),
     movePicture: (fromId: string, twoWay: boolean) =>
       movePicture(fromId, id, twoWay),
