@@ -16,7 +16,7 @@ export const Template: React.FC<Props> = ({ className, onSelect }) => {
       <div
         className={cx(
           className,
-          "flex w-full flex-auto flex-col items-center gap-6 pl-10 pr-10"
+          "flex w-full flex-auto flex-col items-center gap-6 p-10"
         )}
       >
         <div className="ml-28 flex items-end gap-5">

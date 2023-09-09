@@ -15,16 +15,14 @@ export const App = function () {
   const showSummaryButton = Object.values(frames).some((f) => f.pictureId);
 
   return (
-    <div className="relative flex h-screen flex-col">
+    <div className="relative h-screen">
       <Header
         showResume={showSummaryButton}
         onResumeClick={() => setShowResumeModal(true)}
       />
-      <main className="flex w-screen  flex-auto items-center justify-center bg-gray-200">
-        <div className="flex h-full w-full items-center justify-between gap-8 ">
-          <Template onSelect={setSelectedId} />
-          <PictureLibrary onSelect={setSelectedId} />
-        </div>
+      <main className="flex h-[calc(100vh-4rem)] w-screen flex-auto items-center justify-center bg-gray-200">
+        <Template onSelect={setSelectedId} />
+        <PictureLibrary onSelect={setSelectedId} />
       </main>
       <Modal
         open={showResumeModal}

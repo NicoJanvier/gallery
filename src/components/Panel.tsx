@@ -13,7 +13,7 @@ export const Panel: React.FC<React.PropsWithChildren<Props>> = ({
     <section
       className={cx(
         className,
-        "border-l-solid h-full border-l-[1px] border-l-gray-300 bg-white"
+        "border-l-solid h-full flex-shrink-0 flex-grow-0 overflow-hidden border-l-[1px] border-l-gray-300 bg-white"
       )}
     >
       {children}
