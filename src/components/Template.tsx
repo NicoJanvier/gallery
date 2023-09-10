@@ -14,19 +14,16 @@ export const Template: React.FC<Props> = ({ className, onSelect }) => {
   return (
     <SizeProvider multiplier={MULTIPLER}>
       <div
-        className={cx(
-          className,
-          "flex w-full flex-auto flex-col items-center gap-6 p-10"
-        )}
+        className={cx(className, "flex w-full flex-col items-start gap-6 p-10")}
       >
-        <div className="ml-28 flex items-end gap-5">
+        <div className="ml-24 flex items-end gap-6">
           <Frame id="0" {...frameProps} size="xs" />
           <Frame id="1" {...frameProps} size="m" />
           <Frame id="2" {...frameProps} size="xl" />
           <Frame id="3" {...frameProps} size="m-square" />
           <Frame id="4" {...frameProps} size="xs" />
         </div>
-        <div className="-ml-28 flex gap-4">
+        <div className=" flex gap-6">
           <Frame id="5" {...frameProps} size="xs" />
           <Frame id="6" {...frameProps} size="l" />
           <div className="flex flex-col gap-4 self-start">
@@ -34,7 +31,7 @@ export const Template: React.FC<Props> = ({ className, onSelect }) => {
             <Frame id="8" {...frameProps} size="s" />
           </div>
           <Frame id="9" {...frameProps} size="m" col />
-          <Frame id="10" {...frameProps} size="s" />
+          <Frame id="10" {...frameProps} size="xs" />
         </div>
       </div>
     </SizeProvider>
