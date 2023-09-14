@@ -67,7 +67,27 @@ export const Frame: React.FC<Props> = ({
     setPicture(pictureId);
     setLoading(false);
   };
-  const onDrop = (acceptedFiles: FileList | null) => {
+
+  const handleWrapperDrop: React.DragEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+    const item = e.dataTransfer.items[0];
+    if (item.kind === "file") {
+      handlePictureLoad(e.dataTransfer.files);
+    } else if (item.kind === "string") {
+      item.getAsString((s) => {
+        const data = JSON.parse(s);
+        if (isDragItemType(data)) {
+          if (data.source === "frame") {
+            movePicture(data.id, !!picture?.id);
+          } else if (data.source === "library") {
+            setPicture(data.id);
+          }
+        }
+      });
+    }
+  };
+
+  const handleInputDrop = (acceptedFiles: FileList | null) => {
     if (!acceptedFiles || !acceptedFiles[0]) return;
     handlePictureLoad(acceptedFiles);
   };
@@ -90,24 +110,7 @@ export const Frame: React.FC<Props> = ({
       onDragOver={(e) => {
         e.preventDefault();
       }}
-      onDrop={(e) => {
-        e.preventDefault();
-        const item = e.dataTransfer.items[0];
-        if (item.kind === "file") {
-          handlePictureLoad(e.dataTransfer.files);
-        } else if (item.kind === "string") {
-          item.getAsString((s) => {
-            const data = JSON.parse(s);
-            if (isDragItemType(data)) {
-              if (data.source === "frame") {
-                movePicture(data.id, !!picture?.id);
-              } else if (data.source === "library") {
-                setPicture(data.id);
-              }
-            }
-          });
-        }
-      }}
+      onDrop={handleWrapperDrop}
     >
       {picture?.id ? (
         <Tooltip
@@ -166,7 +169,7 @@ export const Frame: React.FC<Props> = ({
             className="hidden"
             type="file"
             accept="image/*"
-            onChange={(e) => onDrop(e.target.files)}
+            onChange={(e) => handleInputDrop(e.target.files)}
           />
           {loading ? <Spinner /> : <FaPlus />}
         </label>

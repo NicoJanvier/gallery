@@ -9,9 +9,7 @@ type Props = {
 
 export const PictureModal: React.FC<Props> = ({ id, onClose }) => {
   const { getPictures } = usePictures();
-
   const [picture] = id ? getPictures([id]) : [];
-  console.log({ picture, id });
   return (
     <Modal
       open={Boolean(picture?.id)}
