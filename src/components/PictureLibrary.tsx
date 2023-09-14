@@ -17,6 +17,7 @@ export const PictureLibrary: React.FC<Props> = ({ onSelect }) => {
 
   const handleSectionDrop: React.DragEventHandler<HTMLElement> = (e) => {
     e.preventDefault();
+    if (loading) return;
     if (e.dataTransfer.files.length) {
       const files = e.dataTransfer.files;
       handlePictureLoad(files);
@@ -42,6 +43,7 @@ export const PictureLibrary: React.FC<Props> = ({ onSelect }) => {
             accept="image/*"
             multiple
             onChange={(e) => handlePictureLoad(e.target.files)}
+            disabled={loading !== 0}
           />
         </label>
         <div className="flex flex-wrap gap-4 overflow-scroll">
