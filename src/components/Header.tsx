@@ -1,7 +1,7 @@
 import * as React from "react";
 import { usePictures } from "./PicturesContext";
 import { useFrames } from "./FramesContext";
-import logo from "/gallery/src/assets/logo.svg";
+import logo from "/src/assets/logo.svg";
 
 type Props = {
   onResumeClick: () => void;
