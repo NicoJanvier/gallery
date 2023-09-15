@@ -9,7 +9,7 @@ export type Picture = {
 
 type PicturesContextType = {
   pictures: Picture[];
-  loading: number;
+  progress: number[];
   loadPictures: (pictures: Picture[]) => void;
   importImages: (files: FileList) => Promise<string[]>;
   getPictures: (ids: string[]) => Picture[];
@@ -21,7 +21,7 @@ export const PicturesProvider: React.FC<React.PropsWithChildren> = ({
   children,
 }) => {
   const [pictures, setPictures] = React.useState<Picture[]>([]);
-  const [loading, setLoading] = React.useState(0);
+  const [progress, setProgress] = React.useState<number[]>([]);
 
   const loadPictures: PicturesContextType["loadPictures"] = (ps) => {
     if (ps.every((p) => p.id && p.name && p.dataUrl)) {
@@ -32,22 +32,30 @@ export const PicturesProvider: React.FC<React.PropsWithChildren> = ({
   };
 
   const importImages: PicturesContextType["importImages"] = (files) => {
-    setLoading(files.length);
+    setProgress(Array.from(files).map(() => 0));
     const ids = Promise.all(
-      Array.from(files).map(async (file) => {
+      Array.from(files).map(async (file, idx) => {
         const existing = pictures.find((p) => p.name === file.name);
         if (existing) {
-          setLoading((l) => --l);
+          setProgress((pp) => {
+            pp[idx] = 100;
+            return [...pp];
+          });
           return existing.id;
         } else {
-          const { name, dataUrl } = await parseImage(file);
+          const { name, dataUrl } = await parseImage(file, {
+            onProgress: (p) =>
+              setProgress((pp) => {
+                pp[idx] = p;
+                return [...pp];
+              }),
+          });
           const id = crypto.randomUUID();
           setPictures((p) => [...p, { id, name, dataUrl }]);
-          setLoading((l) => --l);
           return id;
         }
       })
-    );
+    ).finally(() => setProgress([]));
     return ids;
   };
 
@@ -60,8 +68,8 @@ export const PicturesProvider: React.FC<React.PropsWithChildren> = ({
   return (
     <Context.Provider
       value={{
+        progress,
         pictures,
-        loading,
         importImages,
         getPictures,
         removePictures,
