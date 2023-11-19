@@ -1,6 +1,5 @@
 import * as React from "react";
 import { SizeKeys } from "../utils/size";
-import { parseImage } from "../utils/images";
 
 type FrameStaticProps = {
   id: string;
@@ -12,17 +11,15 @@ type FrameProps = {
 } & FrameStaticProps;
 
 export type Frame = {
-  dataUrl?: string;
-  name?: string;
-  id: string;
+  pictureId?: string;
 } & FrameProps;
 
-type FrameMap = Record<string, Frame>;
+export type FrameMap = Record<string, Frame>;
 type ContextType = {
   frames: FrameMap;
-  loadFrames: (data: any) => void;
+  loadFrames: (data: FrameMap) => void;
   addFrame: (f: Frame) => void;
-  setPicture: (id: string, file: File) => Promise<null>;
+  setPicture: (id: string, pictureId: string) => void;
   removePicture: (id: string) => void;
   movePicture: (from: string, to: string, twoWay: boolean) => void;
   toggleMask: (id: string) => void;
@@ -32,7 +29,7 @@ const Context = React.createContext<ContextType>({
   frames: {},
   loadFrames: () => null,
   addFrame: () => null,
-  setPicture: async () => null,
+  setPicture: () => null,
   removePicture: () => null,
   movePicture: () => null,
   toggleMask: () => null,
@@ -43,11 +40,20 @@ export const FramesProvider: React.FC<React.PropsWithChildren> = ({
 }) => {
   const [frames, setFrames] = React.useState<FrameMap>({});
 
-  const loadFrames = (data: any) => {
-    try {
-      setFrames(data as FrameMap);
-    } catch (error) {
-      alert("Couldn't load data!");
+  const loadFrames = (frames: FrameMap) => {
+    if (
+      Object.entries(frames).every(
+        ([key, value]) =>
+          typeof key === "string" &&
+          value.id &&
+          value.size &&
+          typeof value.mask === "boolean" &&
+          typeof value.col === "boolean"
+      )
+    ) {
+      setFrames(frames);
+    } else {
+      throw new Error("Couldn't load pictures");
     }
   };
 
@@ -57,32 +63,37 @@ export const FramesProvider: React.FC<React.PropsWithChildren> = ({
     }
   };
 
-  const setPicture = async (id: string, file: File) => {
-    if (!frames[id]) return null;
-    const image = await parseImage(file);
-    setFrames((f) => ({ ...f, [id]: { ...f[id], ...image } }));
-    return null;
+  const setPicture = (id: string, pictureId: string) => {
+    setFrames((f) => ({ ...f, [id]: { ...f[id], pictureId } }));
   };
 
   const removePicture = (id: string) => {
     if (!frames[id]) return null;
     setFrames((f) => ({
       ...f,
-      [id]: { ...f[id], name: undefined, dataUrl: undefined },
+      [id]: { ...f[id], pictureId: undefined },
     }));
   };
 
   const movePicture = (fromId: string, toId: string, twoWay: boolean) => {
-    if (!frames[fromId] || !frames[toId]) return null;
-    setFrames((f) => ({
-      ...f,
-      [fromId]: {
-        ...f[fromId],
-        name: twoWay ? f[toId].name : undefined,
-        dataUrl: twoWay ? f[toId].dataUrl : undefined,
-      },
-      [toId]: { ...f[toId], name: f[fromId].name, dataUrl: f[fromId].dataUrl },
-    }));
+    if (frames[fromId]?.pictureId) {
+      const [fromPicture, toPicture] = [
+        frames[fromId].pictureId,
+        frames[toId].pictureId,
+      ];
+
+      setFrames((f) => ({
+        ...f,
+        [fromId]: {
+          ...f[fromId],
+          pictureId: twoWay && toPicture ? toPicture : undefined,
+        },
+        [toId]: {
+          ...f[toId],
+          pictureId: fromPicture,
+        },
+      }));
+    }
   };
 
   const toggleMask = (id: string) => {
@@ -125,7 +136,7 @@ export const withFramesProvider = <P extends object>(
     }
   };
 
-export const usePicture = (id: string) => {
+export const useFramePicture = (id: string) => {
   const { frames } = React.useContext(Context);
   return frames[id];
 };
@@ -145,7 +156,7 @@ export const useFrame = ({ id, size, col }: FrameStaticProps) => {
   }, [col, size, id, addFrame]);
 
   return {
-    setPicture: (file: File) => setPicture(id, file),
+    setPicture: (pictureId: string) => setPicture(id, pictureId),
     removePicture: () => removePicture(id),
     movePicture: (fromId: string, twoWay: boolean) =>
       movePicture(fromId, id, twoWay),

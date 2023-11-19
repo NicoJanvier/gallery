@@ -1,13 +1,6 @@
-import imageCompression from "browser-image-compression";
+import imageCompression, { Options } from "browser-image-compression";
 
 const MAX_SIZE_MB = 0.15;
-
-async function compressImage(image: File) {
-  const compressedFile = await imageCompression(image, {
-    maxSizeMB: MAX_SIZE_MB,
-  });
-  return compressedFile;
-}
 
 async function getImageData(image: File) {
   const dataUrl = await imageCompression.getDataUrlFromFile(image);
@@ -21,10 +14,14 @@ function bytesToMB(bytes: number): number {
   return bytes / (1024 * 1024);
 }
 
-export async function parseImage(image: File) {
+export async function parseImage(image: File, options: Options) {
   let img: File = image;
   if (bytesToMB(image.size) > MAX_SIZE_MB) {
-    img = await compressImage(image);
+    img = await imageCompression(image, {
+      ...options,
+      maxSizeMB: MAX_SIZE_MB,
+      useWebWorker: true,
+    });
   }
   return getImageData(img);
 }

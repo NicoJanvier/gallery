@@ -2,21 +2,33 @@ import React from "react";
 import { Frame, useFrames } from "./FramesContext";
 import { SIZES } from "../utils/size";
 import { FaExclamationTriangle } from "react-icons/fa";
+import { usePictures } from "./PicturesContext";
+import { Picture } from "./PicturesContext";
 
+type EnhancedFrame = Frame & Pick<Picture, "dataUrl" | "name">
 export const FramesListSummary: React.FC = () => {
+  const { getPictures } = usePictures();
   const { frames } = useFrames();
 
   // Filter out frames with no dataUrl and sort them by first dimension
   const filteredFrames = Object.values(frames)
-    .filter((frame) => frame.dataUrl)
+    .filter((frame) => frame.pictureId)
     .sort((a, b) => {
       const [aWidth] = SIZES[a.size][0];
       const [bWidth] = SIZES[b.size][0];
       return aWidth - bWidth;
+    })
+    .map(f => {
+      const [picture] = getPictures([f.pictureId!])
+      return {
+        ...f,
+        dataUrl: picture.dataUrl,
+        name: picture.name,
+      }
     });
 
   // Group frames by effective size (taking mask into account)
-  const groupedFrames: Record<string, Frame[]> = {};
+  const groupedFrames: Record<string, EnhancedFrame[]> = {};
   filteredFrames.forEach((frame) => {
     const { size, mask } = frame;
     const effectiveSize = mask ? SIZES[size][1] : SIZES[size][0];
