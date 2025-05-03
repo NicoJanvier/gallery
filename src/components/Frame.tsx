@@ -1,6 +1,6 @@
 import * as React from "react";
 
-import cx from "classnames";
+import clsx from "clsx";
 import { useSize } from "./SizeContext";
 import { FaBorderStyle, FaTimes, FaPlus } from "react-icons/fa";
 import { SIZES } from "../utils/size";
@@ -103,7 +103,7 @@ export const Frame: React.FC<Props> = ({
         height: fh * multiplier,
         borderWidth: 2 * multiplier,
       }}
-      className={cx(
+      className={clsx(
         "group box-content flex items-center justify-center border-solid border-black bg-white",
         className
       )}
@@ -141,7 +141,7 @@ export const Frame: React.FC<Props> = ({
             <img
               src={picture?.dataUrl}
               alt={picture?.name}
-              className={cx(
+              className={clsx(
                 "h-full object-cover hover:cursor-pointer",
                 col && "max-h-full max-w-none"
               )}

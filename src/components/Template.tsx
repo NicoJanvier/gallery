@@ -1,5 +1,5 @@
 import * as React from "react";
-import cx from "classnames";
+import clsx from "clsx";
 import { Frame } from "./Frame";
 import { SizeProvider } from "./SizeContext";
 
@@ -14,7 +14,10 @@ export const Template: React.FC<Props> = ({ className, onSelect }) => {
   return (
     <SizeProvider multiplier={MULTIPLER}>
       <div
-        className={cx(className, "flex w-full flex-col items-start gap-6 p-10")}
+        className={clsx(
+          className,
+          "flex w-full flex-col items-start gap-6 p-10"
+        )}
       >
         <div className="ml-24 flex items-end gap-6">
           <Frame id="0" {...frameProps} size="xs" />

@@ -1,4 +1,4 @@
-import cx from "classnames";
+import clsx from "clsx";
 import * as React from "react";
 import { FaTimes } from "react-icons/fa";
 import { Panel } from "./Panel";
@@ -54,7 +54,7 @@ export const PictureLibrary: React.FC<Props> = ({ onSelect }) => {
     <Panel>
       <div className="flex h-full w-80 flex-col p-4">
         <label
-          className={cx(
+          className={clsx(
             "flex w-full flex-shrink-0 basis-20 items-center justify-center rounded border-2 border-dashed border-gray-200 text-gray-400",
             !isLoading && "hover:cursor-pointer hover:border-indigo-400"
           )}

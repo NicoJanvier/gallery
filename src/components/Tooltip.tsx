@@ -1,5 +1,5 @@
 import * as React from "react";
-import cx from "classnames";
+import clsx from "clsx";
 
 type Props = React.PropsWithChildren<{
   content: React.ReactNode;
@@ -29,7 +29,7 @@ export const Tooltip: React.FC<Props> = ({ content, children }) => {
       <div onContextMenu={handleContextMenu}>{children}</div>
       <div
         ref={tooltipRef}
-        className={cx(
+        className={clsx(
           "absolute z-10 scale-0 overflow-hidden rounded border-solid border-gray-200 bg-indigo-900 text-xs text-white",
           show && "scale-100"
         )}
