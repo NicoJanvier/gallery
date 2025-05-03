@@ -1,6 +1,6 @@
 import React from "react";
 import { Frame, useFrames } from "./FramesContext";
-import { SIZES } from "../utils/size";
+import { SIZES } from "../lib/utils/size";
 import { FaExclamationTriangle } from "react-icons/fa";
 import { usePictures } from "./PicturesContext";
 import { Picture } from "./PicturesContext";
@@ -50,36 +50,28 @@ export const FramesListSummary: React.FC = () => {
   };
 
   return (
-    <div className="flex flex-col gap-4">
+    <div className="flex flex-col gap-4 divide-y ">
       {Object.entries(groupedFrames).map(([key, frames]) => (
-        <div
-          key={key}
-          className="flex flex-col gap-2 border-b-2 border-solid border-b-gray-200 pb-4 last:border-b-0"
-        >
+        <div key={key} className="flex flex-col gap-2 pb-4">
           <h2 className="mb-2 text-xl font-medium">Print size: {key}</h2>
           {frames.map((frame) => (
-            <div key={frame.id} className="flex gap-2">
-              <img src={frame.dataUrl} alt={frame.name} className="w-20" />
-              <div>
-                <a
-                  href=""
-                  className="font-medium hover:cursor-copy hover:underline"
-                  title="Copy to clipboard"
-                  onClick={(e) => {
-                    e.preventDefault();
-                    handleCopyContent(frame.name!);
-                  }}
-                >
-                  {frame.name}
-                </a>
-                {frame.col && (
-                  <p className="flex items-center gap-2">
-                    <FaExclamationTriangle className="inline-block text-red-500" />{" "}
-                    This image is to be printed in portrait, remember to rotate
-                    it!
-                  </p>
-                )}
-              </div>
+            <div key={frame.id} className="flex items-start gap-2">
+              <img
+                src={frame.dataUrl}
+                alt={frame.name}
+                className="w-20 rounded border"
+              />
+              <a
+                href=""
+                className="font-medium hover:cursor-copy hover:underline"
+                title="Copy to clipboard"
+                onClick={(e) => {
+                  e.preventDefault();
+                  handleCopyContent(frame.name!);
+                }}
+              >
+                {frame.name}
+              </a>
             </div>
           ))}
         </div>

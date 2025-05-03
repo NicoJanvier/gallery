@@ -8,7 +8,7 @@ export const App = function () {
   return (
     <div className="relative h-screen">
       <Header />
-      <main className="flex h-[calc(100vh-4rem)] w-screen flex-auto items-center justify-center bg-gray-200">
+      <main className="bg-secondary flex h-[calc(100vh-4rem)] w-screen flex-auto items-center justify-center">
         <Template />
         <PictureLibrary />
       </main>

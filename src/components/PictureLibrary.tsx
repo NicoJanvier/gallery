@@ -55,8 +55,8 @@ export const PictureLibrary: React.FC<Props> = () => {
       <div className="flex h-full w-80 flex-col p-4">
         <label
           className={clsx(
-            "flex w-full flex-shrink-0 basis-20 items-center justify-center rounded border-2 border-dashed border-gray-200 text-gray-400",
-            !isLoading && "hover:cursor-pointer hover:border-indigo-400"
+            "text-secondary-foreground bg-secondary flex w-full flex-shrink-0 basis-20 items-center justify-center rounded border-2 border-dashed",
+            !isLoading && "hover:border-primary hover:cursor-pointer"
           )}
           onDrop={handleSectionDrop}
           onDragOver={(e) => {
@@ -82,7 +82,7 @@ export const PictureLibrary: React.FC<Props> = () => {
                 <div className="relative" key={id}>
                   <img
                     src={dataUrl}
-                    className="peer h-20 w-20 border object-cover hover:cursor-pointer"
+                    className="hover:border-primary/50 peer h-20 w-20 overflow-hidden rounded border object-cover hover:cursor-pointer"
                     alt={name}
                     draggable
                     onDragStart={(e) => {
@@ -109,7 +109,7 @@ export const PictureLibrary: React.FC<Props> = () => {
           {progress
             .filter((v) => v && v !== 100)
             .map(() => (
-              <div className=" h-20 w-20 animate-pulse bg-slate-200 " />
+              <div className="bg-secondary h-20 w-20 animate-pulse rounded " />
             ))}
         </div>
       </div>

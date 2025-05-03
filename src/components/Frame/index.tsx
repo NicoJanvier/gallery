@@ -3,7 +3,7 @@ import { Plus } from "lucide-react";
 import * as React from "react";
 
 import { useSize } from "../SizeContext";
-import { SIZES } from "../../utils/size";
+import { SIZES } from "../../lib/utils/size";
 import { useFrame } from "../FramesContext";
 import { Spinner } from "../Spinner";
 import { usePictures } from "../PicturesContext";
@@ -145,11 +145,10 @@ export const Frame: React.FC<Props> = ({
         </FrameMenu>
       ) : (
         <label
-          className="box-border flex items-center justify-center rounded-none border-solid border-gray-200 bg-transparent text-xs text-gray-400 hover:cursor-pointer hover:border-indigo-400"
+          className="hover:border-primary/50 text-muted-foreground box-border flex items-center justify-center rounded-none border hover:cursor-pointer hover:border-2"
           style={{
             width: mw * multiplier,
             height: mh * multiplier,
-            borderWidth: 1,
           }}
         >
           <input

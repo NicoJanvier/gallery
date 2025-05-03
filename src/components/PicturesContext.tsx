@@ -1,5 +1,5 @@
 import * as React from "react";
-import { parseImage } from "../utils/images";
+import { parseImage } from "../lib/utils/images";
 
 export type Picture = {
   id: string;
