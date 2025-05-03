@@ -1,9 +1,10 @@
 import clsx from "clsx";
+import { X } from "lucide-react";
 import * as React from "react";
-import { FaTimes } from "react-icons/fa";
 import { Panel } from "./Panel";
 import { usePictures } from "./PicturesContext";
 import { useFrames } from "./FramesContext";
+import { Button } from "./ui/button";
 
 type Props = {
   onSelect: (id: string) => void;
@@ -80,7 +81,7 @@ export const PictureLibrary: React.FC<Props> = ({ onSelect }) => {
             <div className="relative" key={id}>
               <img
                 src={dataUrl}
-                className="peer h-20 w-20 object-cover hover:cursor-pointer"
+                className="peer h-20 w-20 border object-cover hover:cursor-pointer"
                 alt={name}
                 draggable
                 onDragStart={(e) => {
@@ -91,12 +92,14 @@ export const PictureLibrary: React.FC<Props> = ({ onSelect }) => {
                 }}
                 onClick={() => onSelect(id)}
               />
-              <button
+              <Button
+                size="icon-xs"
                 onClick={() => handleRemove(id)}
-                className="absolute right-[-.75rem] top-[-.75rem] hidden h-6 w-6 rounded-full bg-indigo-700 text-white hover:block hover:bg-indigo-900 peer-hover:block"
+                title="Remove"
+                className="absolute right-0 top-0 hidden -translate-y-1/2 translate-x-1/2 rounded-full hover:block peer-hover:block"
               >
-                <FaTimes className="mx-auto" />
-              </button>
+                <X />
+              </Button>
             </div>
           ))}
           {progress
