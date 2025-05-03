@@ -1,18 +1,13 @@
 import clsx from "clsx";
-import { SquareDashed, X, Plus } from "lucide-react";
+import { Plus } from "lucide-react";
 import * as React from "react";
 
-import {
-  ContextMenu,
-  ContextMenuContent,
-  ContextMenuItem,
-  ContextMenuTrigger,
-} from "@/components/ui/context-menu";
-import { useSize } from "./SizeContext";
-import { SIZES } from "../utils/size";
-import { useFrame } from "./FramesContext";
-import { Spinner } from "./Spinner";
-import { usePictures } from "./PicturesContext";
+import { useSize } from "../SizeContext";
+import { SIZES } from "../../utils/size";
+import { useFrame } from "../FramesContext";
+import { Spinner } from "../Spinner";
+import { usePictures } from "../PicturesContext";
+import { FrameMenu } from "./FrameMenu";
 
 type Props = {
   className?: string;
@@ -35,29 +30,6 @@ function isDragItemType(obj: unknown): obj is DragItemType {
     Object.hasOwn(obj, "id")
   );
 }
-
-const FrameMenu = ({
-  children,
-  toggleMask,
-  handleDelete,
-}: React.PropsWithChildren<{
-  toggleMask: () => void;
-  handleDelete: () => void;
-}>) => {
-  return (
-    <ContextMenu>
-      <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
-      <ContextMenuContent>
-        <ContextMenuItem onClick={toggleMask}>
-          <SquareDashed /> Mask
-        </ContextMenuItem>
-        <ContextMenuItem onClick={handleDelete}>
-          <X /> Remove
-        </ContextMenuItem>
-      </ContextMenuContent>
-    </ContextMenu>
-  );
-};
 
 export const Frame: React.FC<Props> = ({
   id,
