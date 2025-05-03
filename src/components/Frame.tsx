@@ -1,11 +1,16 @@
+import clsx from "clsx";
+import { SquareDashed, X, Plus } from "lucide-react";
 import * as React from "react";
 
-import clsx from "clsx";
+import {
+  ContextMenu,
+  ContextMenuContent,
+  ContextMenuItem,
+  ContextMenuTrigger,
+} from "@/components/ui/context-menu";
 import { useSize } from "./SizeContext";
-import { FaBorderStyle, FaTimes, FaPlus } from "react-icons/fa";
 import { SIZES } from "../utils/size";
 import { useFrame } from "./FramesContext";
-import { Tooltip } from "./Tooltip";
 import { Spinner } from "./Spinner";
 import { usePictures } from "./PicturesContext";
 
@@ -30,6 +35,29 @@ function isDragItemType(obj: unknown): obj is DragItemType {
     Object.hasOwn(obj, "id")
   );
 }
+
+const FrameMenu = ({
+  children,
+  toggleMask,
+  handleDelete,
+}: React.PropsWithChildren<{
+  toggleMask: () => void;
+  handleDelete: () => void;
+}>) => {
+  return (
+    <ContextMenu>
+      <ContextMenuTrigger asChild>{children}</ContextMenuTrigger>
+      <ContextMenuContent>
+        <ContextMenuItem onClick={toggleMask}>
+          <SquareDashed /> Mask
+        </ContextMenuItem>
+        <ContextMenuItem onClick={handleDelete}>
+          <X /> Remove
+        </ContextMenuItem>
+      </ContextMenuContent>
+    </ContextMenu>
+  );
+};
 
 export const Frame: React.FC<Props> = ({
   id,
@@ -113,24 +141,7 @@ export const Frame: React.FC<Props> = ({
       onDrop={handleWrapperDrop}
     >
       {picture?.id ? (
-        <Tooltip
-          content={
-            <>
-              <button
-                onClick={toggleMask}
-                className="flex h-8 w-full min-w-[8rem] items-center gap-1 bg-transparent px-2 py-3 text-xs hover:bg-indigo-700"
-              >
-                <FaBorderStyle className="inline-block" /> Mask
-              </button>
-              <button
-                onClick={handleDelete}
-                className="flex h-8 w-full min-w-[8rem] items-center gap-1 bg-transparent px-2 py-3 text-xs hover:bg-indigo-700"
-              >
-                <FaTimes className="inline-block" /> Remove
-              </button>
-            </>
-          }
-        >
+        <FrameMenu toggleMask={toggleMask} handleDelete={handleDelete}>
           <div
             style={{
               width: (mask ? mw : fw) * multiplier,
@@ -155,7 +166,7 @@ export const Frame: React.FC<Props> = ({
               onClick={() => pictureId && onClick(pictureId)}
             />
           </div>
-        </Tooltip>
+        </FrameMenu>
       ) : (
         <label
           className="box-border flex items-center justify-center rounded-none border-solid border-gray-200 bg-transparent text-xs text-gray-400 hover:cursor-pointer hover:border-indigo-400"
@@ -171,7 +182,7 @@ export const Frame: React.FC<Props> = ({
             accept="image/*"
             onChange={(e) => handleInputDrop(e.target.files)}
           />
-          {loading ? <Spinner /> : <FaPlus />}
+          {loading ? <Spinner /> : <Plus />}
         </label>
       )}
     </div>
