@@ -17,7 +17,7 @@ export const PictureDetails: React.FC<Props> = ({ id = "" }) => {
     try {
       await navigator.clipboard.writeText(text);
     } catch (err) {
-      //
+      console.error(err);
     }
   };
   return (

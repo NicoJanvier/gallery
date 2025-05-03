@@ -5,7 +5,7 @@ import { FaExclamationTriangle } from "react-icons/fa";
 import { usePictures } from "./PicturesContext";
 import { Picture } from "./PicturesContext";
 
-type EnhancedFrame = Frame & Pick<Picture, "dataUrl" | "name">
+type EnhancedFrame = Frame & Pick<Picture, "dataUrl" | "name">;
 export const FramesListSummary: React.FC = () => {
   const { getPictures } = usePictures();
   const { frames } = useFrames();
@@ -18,13 +18,13 @@ export const FramesListSummary: React.FC = () => {
       const [bWidth] = SIZES[b.size][0];
       return aWidth - bWidth;
     })
-    .map(f => {
-      const [picture] = getPictures([f.pictureId!])
+    .map((f) => {
+      const [picture] = getPictures([f.pictureId!]);
       return {
         ...f,
         dataUrl: picture.dataUrl,
         name: picture.name,
-      }
+      };
     });
 
   // Group frames by effective size (taking mask into account)
@@ -45,7 +45,7 @@ export const FramesListSummary: React.FC = () => {
     try {
       await navigator.clipboard.writeText(text);
     } catch (err) {
-      //
+      console.error(err);
     }
   };
 
