@@ -1,16 +1,20 @@
 import * as React from "react";
 import { Button } from "@/components/ui/button";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 import { usePictures } from "./PicturesContext";
 import { useFrames } from "./FramesContext";
 import logo from "/src/assets/logo.svg";
-import Modal from "./Modal";
 import { FramesListSummary } from "./FramesListSummary";
 
 type Props = { foo?: string };
 
 export const Header: React.FC<Props> = () => {
-  const [showResumeModal, setShowResumeModal] = React.useState(false);
-
   const { pictures, loadPictures } = usePictures();
   const { frames, loadFrames } = useFrames();
   const hasFrames = Object.values(frames).some((f) => f.pictureId);
@@ -76,17 +80,18 @@ export const Header: React.FC<Props> = () => {
         >
           Save
         </Button>
-        <Button onClick={() => setShowResumeModal(true)} disabled={!hasFrames}>
-          Summary
-        </Button>
+        <Dialog>
+          <DialogTrigger asChild>
+            <Button disabled={!hasFrames}>Summary</Button>
+          </DialogTrigger>
+          <DialogContent>
+            <DialogHeader>
+              <DialogTitle>Summary</DialogTitle>
+            </DialogHeader>
+            <FramesListSummary />
+          </DialogContent>
+        </Dialog>
       </header>
-      <Modal
-        open={showResumeModal}
-        onClose={() => setShowResumeModal(false)}
-        title="Summary"
-      >
-        <FramesListSummary />
-      </Modal>
     </>
   );
 };

@@ -5,12 +5,11 @@ import { Panel } from "./Panel";
 import { usePictures } from "./PicturesContext";
 import { useFrames } from "./FramesContext";
 import { Button } from "./ui/button";
+import { PictureModal } from "./PictureModal";
 
-type Props = {
-  onSelect: (id: string) => void;
-};
+type Props = {};
 
-export const PictureLibrary: React.FC<Props> = ({ onSelect }) => {
+export const PictureLibrary: React.FC<Props> = () => {
   const { progress, pictures, importImages, removePictures } = usePictures();
   const progression = Math.round(
     progress.length
@@ -78,29 +77,34 @@ export const PictureLibrary: React.FC<Props> = ({ onSelect }) => {
         </label>
         <div className="flex flex-wrap gap-4 overflow-scroll pt-4">
           {pictures.map(({ id, name, dataUrl }) => (
-            <div className="relative" key={id}>
-              <img
-                src={dataUrl}
-                className="peer h-20 w-20 border object-cover hover:cursor-pointer"
-                alt={name}
-                draggable
-                onDragStart={(e) => {
-                  e.dataTransfer.items.add(
-                    JSON.stringify({ source: "library", id }),
-                    "text/plain"
-                  );
-                }}
-                onClick={() => onSelect(id)}
-              />
-              <Button
-                size="icon-xs"
-                onClick={() => handleRemove(id)}
-                title="Remove"
-                className="absolute right-0 top-0 hidden -translate-y-1/2 translate-x-1/2 rounded-full hover:block peer-hover:block"
-              >
-                <X />
-              </Button>
-            </div>
+            <PictureModal
+              trigger={
+                <div className="relative" key={id}>
+                  <img
+                    src={dataUrl}
+                    className="peer h-20 w-20 border object-cover hover:cursor-pointer"
+                    alt={name}
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.items.add(
+                        JSON.stringify({ source: "library", id }),
+                        "text/plain"
+                      );
+                    }}
+                  />
+                  <Button
+                    size="icon-xs"
+                    onClick={() => handleRemove(id)}
+                    title="Remove"
+                    className="absolute right-0 top-0 hidden -translate-y-1/2 translate-x-1/2 rounded-full hover:block peer-hover:block"
+                  >
+                    <X />
+                  </Button>
+                </div>
+              }
+              url={dataUrl}
+              name={name}
+            />
           ))}
           {progress
             .filter((v) => v && v !== 100)

@@ -1,22 +1,32 @@
 import * as React from "react";
-import Modal from "./Modal";
-import { usePictures } from "./PicturesContext";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+} from "@/components/ui/dialog";
 
-type Props = {
-  id?: string;
-  onClose: () => void;
-};
-
-export const PictureModal: React.FC<Props> = ({ id, onClose }) => {
-  const { getPictures } = usePictures();
-  const [picture] = id ? getPictures([id]) : [];
+export const PictureModal = ({
+  trigger,
+  url,
+  name,
+}: {
+  trigger: React.ReactNode;
+  url: string;
+  name: string;
+}) => {
   return (
-    <Modal
-      open={Boolean(picture?.id)}
-      onClose={onClose}
-      title={picture?.name ?? ""}
-    >
-      <img src={picture?.dataUrl} className="h-80" />
-    </Modal>
+    <Dialog>
+      <DialogTrigger asChild>{trigger}</DialogTrigger>
+      <DialogContent>
+        <DialogHeader>
+          <DialogTitle>{name}</DialogTitle>
+        </DialogHeader>
+        <div>
+          <img src={url} className="h-80" />
+        </div>
+      </DialogContent>
+    </Dialog>
   );
 };

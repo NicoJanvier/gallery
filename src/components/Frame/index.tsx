@@ -8,13 +8,13 @@ import { useFrame } from "../FramesContext";
 import { Spinner } from "../Spinner";
 import { usePictures } from "../PicturesContext";
 import { FrameMenu } from "./FrameMenu";
+import { PictureModal } from "../PictureModal";
 
 type Props = {
   className?: string;
   id: string;
   size: keyof typeof SIZES;
   col?: boolean;
-  onClick: (id: string) => void;
 };
 
 type DragItemType = {
@@ -36,7 +36,6 @@ export const Frame: React.FC<Props> = ({
   col,
   size: sizeKey,
   className,
-  onClick,
 }) => {
   const {
     frame: { mask, pictureId },
@@ -121,21 +120,26 @@ export const Frame: React.FC<Props> = ({
             }}
             className="flex items-center justify-center overflow-hidden"
           >
-            <img
-              src={picture?.dataUrl}
-              alt={picture?.name}
-              className={clsx(
-                "h-full object-cover hover:cursor-pointer",
-                col && "max-h-full max-w-none"
-              )}
-              draggable
-              onDragStart={(e) => {
-                e.dataTransfer.items.add(
-                  JSON.stringify({ source: "frame", id }),
-                  "text/plain"
-                );
-              }}
-              onClick={() => pictureId && onClick(pictureId)}
+            <PictureModal
+              url={picture.dataUrl}
+              name={picture.name}
+              trigger={
+                <img
+                  src={picture.dataUrl}
+                  alt={picture.name}
+                  className={clsx(
+                    "h-full object-cover hover:cursor-pointer",
+                    col && "max-h-full max-w-none"
+                  )}
+                  draggable
+                  onDragStart={(e) => {
+                    e.dataTransfer.items.add(
+                      JSON.stringify({ source: "frame", id }),
+                      "text/plain"
+                    );
+                  }}
+                />
+              }
             />
           </div>
         </FrameMenu>
