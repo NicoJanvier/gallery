@@ -84,7 +84,7 @@ export const Header: React.FC<Props> = () => {
           <DialogTrigger asChild>
             <Button disabled={!hasFrames}>Summary</Button>
           </DialogTrigger>
-          <DialogContent>
+          <DialogContent className="max-h-[80dvh] overflow-y-auto">
             <DialogHeader>
               <DialogTitle>Summary</DialogTitle>
             </DialogHeader>
