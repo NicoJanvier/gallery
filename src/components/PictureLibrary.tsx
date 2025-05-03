@@ -7,9 +7,7 @@ import { useFrames } from "./FramesContext";
 import { Button } from "./ui/button";
 import { PictureModal } from "./PictureModal";
 
-type Props = {};
-
-export const PictureLibrary: React.FC<Props> = () => {
+export const PictureLibrary: React.FC = () => {
   const { progress, pictures, importImages, removePictures } = usePictures();
   const progression = Math.round(
     progress.length

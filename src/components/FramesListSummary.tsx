@@ -1,7 +1,6 @@
 import React from "react";
 import { Frame, useFrames } from "./FramesContext";
 import { SIZES } from "../lib/utils/size";
-import { FaExclamationTriangle } from "react-icons/fa";
 import { usePictures } from "./PicturesContext";
 import { Picture } from "./PicturesContext";
 
