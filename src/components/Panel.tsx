@@ -1,5 +1,5 @@
 import * as React from "react";
-import cx from "classnames";
+import clsx from "clsx";
 
 type Props = {
   className?: string;
@@ -11,9 +11,9 @@ export const Panel: React.FC<React.PropsWithChildren<Props>> = ({
 }) => {
   return (
     <section
-      className={cx(
+      className={clsx(
         className,
-        "border-l-solid h-full flex-shrink-0 flex-grow-0 overflow-hidden border-l-[1px] border-l-gray-300 bg-white"
+        "bg-background h-full flex-shrink-0 flex-grow-0 overflow-hidden border-l"
       )}
     >
       {children}

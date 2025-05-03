@@ -1,5 +1,5 @@
 import * as React from "react";
-import { SizeKeys } from "../utils/size";
+import { SizeKeys } from "../lib/utils/size";
 
 type FrameStaticProps = {
   id: string;

@@ -1,15 +1,13 @@
-import cx from "classnames";
+import clsx from "clsx";
+import { X } from "lucide-react";
 import * as React from "react";
-import { FaTimes } from "react-icons/fa";
 import { Panel } from "./Panel";
 import { usePictures } from "./PicturesContext";
 import { useFrames } from "./FramesContext";
+import { Button } from "./ui/button";
+import { PictureModal } from "./PictureModal";
 
-type Props = {
-  onSelect: (id: string) => void;
-};
-
-export const PictureLibrary: React.FC<Props> = ({ onSelect }) => {
+export const PictureLibrary: React.FC = () => {
   const { progress, pictures, importImages, removePictures } = usePictures();
   const progression = Math.round(
     progress.length
@@ -54,9 +52,9 @@ export const PictureLibrary: React.FC<Props> = ({ onSelect }) => {
     <Panel>
       <div className="flex h-full w-80 flex-col p-4">
         <label
-          className={cx(
-            "flex w-full flex-shrink-0 basis-20 items-center justify-center rounded border-2 border-dashed border-gray-200 text-gray-400",
-            !isLoading && "hover:cursor-pointer hover:border-indigo-400"
+          className={clsx(
+            "text-secondary-foreground bg-secondary flex w-full flex-shrink-0 basis-20 items-center justify-center rounded border-2 border-dashed",
+            !isLoading && "hover:border-primary hover:cursor-pointer"
           )}
           onDrop={handleSectionDrop}
           onDragOver={(e) => {
@@ -77,32 +75,39 @@ export const PictureLibrary: React.FC<Props> = ({ onSelect }) => {
         </label>
         <div className="flex flex-wrap gap-4 overflow-scroll pt-4">
           {pictures.map(({ id, name, dataUrl }) => (
-            <div className="relative" key={id}>
-              <img
-                src={dataUrl}
-                className="peer h-20 w-20 object-cover hover:cursor-pointer"
-                alt={name}
-                draggable
-                onDragStart={(e) => {
-                  e.dataTransfer.items.add(
-                    JSON.stringify({ source: "library", id }),
-                    "text/plain"
-                  );
-                }}
-                onClick={() => onSelect(id)}
-              />
-              <button
-                onClick={() => handleRemove(id)}
-                className="absolute right-[-.75rem] top-[-.75rem] hidden h-6 w-6 rounded-full bg-indigo-700 text-white hover:block hover:bg-indigo-900 peer-hover:block"
-              >
-                <FaTimes className="mx-auto" />
-              </button>
-            </div>
+            <PictureModal
+              trigger={
+                <div className="relative" key={id}>
+                  <img
+                    src={dataUrl}
+                    className="hover:border-primary/50 peer h-20 w-20 overflow-hidden rounded border object-cover hover:cursor-pointer"
+                    alt={name}
+                    draggable
+                    onDragStart={(e) => {
+                      e.dataTransfer.items.add(
+                        JSON.stringify({ source: "library", id }),
+                        "text/plain"
+                      );
+                    }}
+                  />
+                  <Button
+                    size="icon-xs"
+                    onClick={() => handleRemove(id)}
+                    title="Remove"
+                    className="absolute right-0 top-0 hidden -translate-y-1/2 translate-x-1/2 rounded-full hover:block peer-hover:block"
+                  >
+                    <X />
+                  </Button>
+                </div>
+              }
+              url={dataUrl}
+              name={name}
+            />
           ))}
           {progress
             .filter((v) => v && v !== 100)
             .map(() => (
-              <div className=" h-20 w-20 animate-pulse bg-slate-200 " />
+              <div className="bg-secondary h-20 w-20 animate-pulse rounded " />
             ))}
         </div>
       </div>
